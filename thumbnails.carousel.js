@@ -1,55 +1,39 @@
 // thumbnails.carousel.js jQuery plugin
 ;(function(window, $, undefined) {
+    $.fn.thumbnailsCarousel = function(options) {
+        conf = $.extend(conf, options);
+        var objContainer = $(this.selector).parent();
+        var objthumbnailsLi = $(this.selector + ' li');
+        var objControls = objContainer.find('.carousel-control');
+       	objContainer.find('ol.carousel-indicators').addClass('indicators-fix');
+       	objthumbnailsLi.first().addClass('active-thumbnail');
+       	var conf = {
+        	center: true,
+        	backgroundControl: false
+    	};
 
-	var conf = {
-		center: true,
-		backgroundControl: false
-	};
+    	if(!conf.backgroundControl) {
+            objContainer.find('.carousel-control').addClass('controls-background-reset');
+        }
+        else {
+            objControls.height(cache.$carouselContainer.find('.carousel-inner').height());
+        }
 
-	var cache = {
-		$carouselContainer: $('.thumbnails-carousel').parent(),
-		$thumbnailsLi: $('.thumbnails-carousel li'),
-		$controls: $('.thumbnails-carousel').parent().find('.carousel-control')
-	};
+        if(conf.center) {
+            objthumbnailsLi.wrapAll("<div class='center clearfix'></div>");
+        }
 
-	function init() {
-		cache.$carouselContainer.find('ol.carousel-indicators').addClass('indicators-fix');
-		cache.$thumbnailsLi.first().addClass('active-thumbnail');
+        objContainer.on('slide.bs.carousel', function(e) {
+            
+            objthumbnailsLi.removeClass('active-thumbnail');
+        	objthumbnailsLi.eq($(e.relatedTarget).index()).addClass('active-thumbnail');
+        });
 
-		if(!conf.backgroundControl) {
-			cache.$carouselContainer.find('.carousel-control').addClass('controls-background-reset');
-		}
-		else {
-			cache.$controls.height(cache.$carouselContainer.find('.carousel-inner').height());
-		}
-
-		if(conf.center) {
-			cache.$thumbnailsLi.wrapAll("<div class='center clearfix'></div>");
-		}
-	}
-
-	function refreshOpacities(domEl) {
-		cache.$thumbnailsLi.removeClass('active-thumbnail');
-		cache.$thumbnailsLi.eq($(domEl).index()).addClass('active-thumbnail');
-	}	
-
-	function bindUiActions() {
-		cache.$carouselContainer.on('slide.bs.carousel', function(e) {
-  			refreshOpacities(e.relatedTarget);
-		});
-
-		cache.$thumbnailsLi.click(function(){
-			cache.$carouselContainer.carousel($(this).index());
-		});
-	}
-
-	$.fn.thumbnailsCarousel = function(options) {
-		conf = $.extend(conf, options);
-
-		init();
-		bindUiActions();
-
-		return this;
-	}
+        objthumbnailsLi.click(function(){
+            objContainer.carousel($(this).index());
+        });
+        return this;
+    }
 
 })(window, jQuery);
+
